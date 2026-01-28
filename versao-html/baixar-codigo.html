@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baixar Código Fonte</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        p {
+            color: #666;
+            font-size: 1em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            margin: 10px;
+            min-width: 200px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-voltar {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+        
+        .icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        
+        .info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .info h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .info ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .info li {
+            padding: 5px 0;
+            color: #555;
+            font-size: 0.95em;
+        }
+        
+        .info li:before {
+            content: "✓ ";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">📦</div>
+        <h1>Código Fonte do Projeto</h1>
+        <p>Baixe o código fonte completo em PDF</p>
+        
+        <button onclick="gerarPDF()">📄 Gerar PDF</button>
+        <button class="btn-voltar" onclick="window.location.href='index.html'">🏠 Voltar</button>
+        
+        <div class="info">
+            <h3>📋 O PDF incluirá:</h3>
+            <ul>
+                <li>Código HTML (index.html)</li>
+                <li>Código CSS (style.css)</li>
+                <li>Código JavaScript (script.js)</li>
+                <li>Formatação profissional</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        async function gerarPDF() {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('p', 'mm', 'a4');
+                
+                // Buscar arquivos
+                const [cssText, jsText] = await Promise.all([
+                    fetch('style.css').then(r => r.text()),
+                    fetch('script.js').then(r => r.text())
+                ]);
+                
+                let y = 20;
+                const margin = 15;
+                const maxWidth = 180;
+                
+                // Capa
+                doc.setFillColor(102, 126, 234);
+                doc.rect(0, 0, 210, 40, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(24);
+                doc.text('Código Fonte', 105, 20, { align: 'center' });
+                doc.setFontSize(12);
+                doc.text('Lista de Convidados', 105, 30, { align: 'center' });
+                
+                // HTML
+                doc.addPage();
+                doc.setTextColor(0);
+                doc.setFontSize(16);
+                doc.text('📄 index.html', margin, 20);
+                
+                y = 30;
+                doc.setFontSize(8);
+                doc.setFont('courier');
+                
+                const htmlLines = getHTMLCode().split('\n');
+                for (let line of htmlLines) {
+                    if (y > 280) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.text(line.substring(0, 100), margin, y);
+                    y += 4;
+                }
+                
+                // CSS
+                doc.addPage();
+                doc.setFont('helvetica');
+                doc.setFontSize(16);
+                doc.text('🎨 style.css', margin, 20);
+                
+                y = 30;
+                doc.setFontSize(8);
+                doc.setFont('courier');
+                
+                const cssLines = cssText.split('\n');
+                for (let line of cssLines) {
+                    if (y > 280) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.text(line.substring(0, 100), margin, y);
+                    y += 4;
+                }
+                
+                // JavaScript
+                doc.addPage();
+                doc.setFont('helvetica');
+                doc.setFontSize(16);
+                doc.text('⚡ script.js', margin, 20);
+                
+                y = 30;
+                doc.setFontSize(8);
+                doc.setFont('courier');
+                
+                const jsLines = jsText.split('\n');
+                for (let line of jsLines) {
+                    if (y > 280) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.text(line.substring(0, 100), margin, y);
+                    y += 4;
+                }
+                
+                // Salvar
+                doc.save('codigo-fonte-projeto.pdf');
+                alert('✅ PDF gerado com sucesso!');
+                
+            } catch (error) {
+                alert('❌ Erro: ' + error.message);
+                console.error(error);
+            }
+        }
+        
+        function getHTMLCode() {
+            return `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Convidados - PDF</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Lista de Convidados</h1>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-number" id="totalConvidados">0</div>
+                    <div class="stat-label">Total de Convidados</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="totalAdultos">0</div>
+                    <div class="stat-label">Adultos</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="totalCriancas">0</div>
+                    <div class="stat-label">Crianças</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn-download" onclick="gerarPDF()">📄 Baixar PDF</button>
+            <input type="text" id="searchInput" placeholder="🔍 Buscar por nome ou responsável...">
+            <select id="filterTipo">
+                <option value="todos">Todos</option>
+                <option value="Adulto">Adultos</option>
+                <option value="Criança">Crianças</option>
+            </select>
+        </div>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Responsável</th>
+                        <th>Nome</th>
+                        <th>Tipo</th>
+                        <th>Contato</th>
+                        <th>Data Confirmação</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>`;
+        }
+    </script>
+</body>
+</html>

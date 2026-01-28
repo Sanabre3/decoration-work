@@ -1,0 +1,242 @@
+/* ========== TAREFAS ========== */
+.tarefas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.tarefa-item {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  transition: all 0.3s;
+}
+
+.tarefa-item:hover {
+  box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+}
+
+.tarefa-item.concluida {
+  opacity: 0.6;
+}
+
+.tarefa-item.concluida .tarefa-conteudo h3 {
+  text-decoration: line-through;
+}
+
+.tarefa-checkbox input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  accent-color: var(--success);
+}
+
+.tarefa-conteudo {
+  flex: 1;
+}
+
+.tarefa-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.tarefa-header h3 {
+  font-size: 1.2em;
+  color: var(--dark);
+  margin: 0;
+}
+
+.tarefa-conteudo p {
+  color: #666;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.btn-excluir-tarefa {
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+  padding: 5px;
+  transition: transform 0.3s;
+  color: #999;
+}
+
+.btn-excluir-tarefa:hover {
+  transform: scale(1.2);
+  color: var(--danger);
+}
+
+/* ========== MESAS ========== */
+.mesas-add {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.mesas-add input {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 1em;
+}
+
+.mesas-add input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.mesas-add input[type="number"] {
+  flex: 0 0 120px;
+}
+
+.mesas-section {
+  margin-bottom: 30px;
+}
+
+.mesas-section h2 {
+  color: var(--dark);
+  margin-bottom: 15px;
+  font-size: 1.3em;
+}
+
+.pessoas-pool {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  min-height: 120px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  transition: all 0.3s;
+}
+
+.pessoas-pool.dragging-over {
+  background: #f0f0ff;
+  border: 2px dashed var(--primary);
+}
+
+.pessoa-tag {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  padding: 10px 15px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  cursor: grab;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s;
+}
+
+.pessoa-tag:active {
+  cursor: grabbing;
+}
+
+.pessoa-tag.dragging {
+  opacity: 0.5;
+}
+
+.pessoa-tag .badge {
+  background: rgba(255,255,255,0.3);
+  color: white;
+  padding: 3px 8px;
+  font-size: 0.8em;
+}
+
+.mesas-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 25px;
+}
+
+.mesa-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  transition: all 0.3s;
+}
+
+.mesa-card:hover {
+  box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+}
+
+.mesa-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--border);
+}
+
+.mesa-titulo {
+  font-size: 1.3em;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.mesa-capacidade {
+  color: #666;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
+.btn-remove-mesa {
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+  padding: 5px;
+  transition: transform 0.3s;
+  color: #999;
+}
+
+.btn-remove-mesa:hover {
+  transform: scale(1.2);
+  color: var(--danger);
+}
+
+.mesa-pessoas {
+  min-height: 100px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #f8f9fa;
+  transition: all 0.3s;
+}
+
+.mesa-pessoas.dragging-over {
+  background: #f0f0ff;
+  border: 2px dashed var(--primary);
+}
+
+@media (max-width: 768px) {
+  .mesas-add {
+    flex-direction: column;
+  }
+
+  .mesas-add input[type="number"] {
+    flex: 1;
+  }
+
+  .mesas-container {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Gerenciamento de Evento</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+</head>
+<body>
+    <!-- Menu Lateral -->
+    <nav class="sidebar">
+        <div class="logo">
+            <h2>🎉 Evento Dashboard</h2>
+        </div>
+        <ul class="menu">
+            <li class="menu-item active" data-page="convidados">
+                <span class="icon">👥</span>
+                <span>Convidados</span>
+            </li>
+            <li class="menu-item" data-page="tarefas">
+                <span class="icon">✓</span>
+                <span>Tarefas</span>
+            </li>
+            <li class="menu-item" data-page="mesas">
+                <span class="icon">🪑</span>
+                <span>Mesas</span>
+            </li>
+            <li class="menu-item" data-page="original">
+                <span class="icon">📄</span>
+                <span>Versão Original</span>
+            </li>
+            <li class="menu-item" data-page="eventos" style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px;">
+                <span class="icon">◀️</span>
+                <span>Voltar aos Eventos</span>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+        
+        <!-- Página: Convidados -->
+        <div id="convidados" class="page active">
+            <header class="page-header">
+                <h1>Lista de Convidados</h1>
+                <div class="header-buttons">
+                    <button class="btn-secondary" onclick="abrirModalImportar()">
+                        📁 Importar Arquivo
+                    </button>
+                    <button class="btn-primary" onclick="abrirModalConvidado()">
+                        ➕ Adicionar Convidado
+                    </button>
+                </div>
+            </header>
+
+            <!-- Estatísticas -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <div class="stat-number" id="stat-total">0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👨</div>
+                    <div class="stat-info">
+                        <div class="stat-number" id="stat-adultos">0</div>
+                        <div class="stat-label">Adultos</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👶</div>
+                    <div class="stat-info">
+                        <div class="stat-number" id="stat-criancas">0</div>
+                        <div class="stat-label">Crianças</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs de Filtro -->
+            <div class="tabs">
+                <button class="tab active" onclick="filtrarConvidados('todos')">Todos</button>
+                <button class="tab" onclick="filtrarConvidados('adultos')">Adultos</button>
+                <button class="tab" onclick="filtrarConvidados('criancas')">Crianças</button>
+            </div>
+
+            <!-- Controles de Busca e Visualização -->
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center;">
+                <div class="search-box" style="flex: 1; margin-bottom: 0;">
+                    <input type="text" id="search-convidados" placeholder="🔍 Buscar convidado..." oninput="buscarConvidados(this.value)">
+                </div>
+                <button class="btn-secondary" onclick="toggleVisualizacao()" id="btn-toggle-view" style="white-space: nowrap;">
+                    📋 Modo Lista
+                </button>
+            </div>
+
+            <!-- Lista de Convidados -->
+            <div class="convidados-grid" id="convidados-container"></div>
+        </div>
+
+        <!-- Página: Tarefas -->
+        <div id="tarefas" class="page">
+            <header class="page-header">
+                <h1>Gerenciamento de Tarefas</h1>
+                <button class="btn-primary" onclick="abrirModalTarefa()">
+                    ➕ Nova Tarefa
+                </button>
+            </header>
+
+            <!-- Estatísticas de Tarefas -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📋</div>
+                    <div class="stat-info">
+                        <div class="stat-number" id="totalTarefas">0</div>
+                        <div class="stat-label">Total de Tarefas</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <div class="stat-number" id="tarefasConcluidas">0</div>
+                        <div class="stat-label">Concluídas</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏳</div>
+                    <div class="stat-info">
+                        <div class="stat-number" id="tarefasPendentes">0</div>
+                        <div class="stat-label">Pendentes</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Tarefas -->
+            <div class="tarefas-container">
+                <div id="tarefas-lista"></div>
+            </div>
+        </div>
+
+        <!-- Página: Mesas -->
+        <div id="mesas" class="page">
+            <header class="page-header">
+                <h1>Organização de Mesas</h1>
+                <button class="btn-primary" onclick="adicionarMesa()">
+                    ➕ Nova Mesa
+                </button>
+            </header>
+
+            <!-- Pessoas Sem Mesa -->
+            <div class="pessoas-sem-mesa">
+                <h3>Pessoas sem Mesa Definida</h3>
+                <div class="pessoas-pool" id="pessoas-pool"></div>
+            </div>
+
+            <!-- Área de Mesas -->
+            <div class="mesas-container" id="mesas-container"></div>
+        </div>
+
+        <!-- Página: Original -->
+        <div id="original" class="page">
+            <iframe src="backup-original/index.html" style="width: 100%; height: 100vh; border: none;"></iframe>
+        </div>
+
+    </main>
+
+    <!-- Modal: Novo Convidado -->
+    <div id="modal-convidado" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Adicionar Convidado</h2>
+                <span class="close" onclick="fecharModal('modal-convidado')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nome Completo *</label>
+                    <input type="text" id="input-nome" placeholder="Digite o nome completo" required>
+                </div>
+                <div class="form-group">
+                    <label>Idade *</label>
+                    <input type="number" id="input-idade" placeholder="Digite a idade" min="0" max="120" required>
+                </div>
+                <div class="form-group">
+                    <label>Tipo *</label>
+                    <select id="input-tipo" onchange="toggleResponsavel()">
+                        <option value="Adulto">Adulto</option>
+                        <option value="Criança">Criança</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Contato</label>
+                    <input type="text" id="input-contato" placeholder="(XX) XXXXX-XXXX">
+                </div>
+                <div class="form-group" id="grupo-responsavel" style="display: none;">
+                    <label>Responsável (obrigatório para crianças) *</label>
+                    <input type="text" id="input-responsavel" placeholder="Nome do responsável">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="fecharModal('modal-convidado')">Cancelar</button>
+                <button class="btn-primary" onclick="salvarConvidado()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Nova Tarefa -->
+    <div id="modal-tarefa" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nova Tarefa</h2>
+                <span class="close" onclick="fecharModal('modal-tarefa')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Título da Tarefa</label>
+                    <input type="text" id="input-tarefa-titulo" placeholder="Digite o título">
+                </div>
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea id="input-tarefa-desc" rows="3" placeholder="Detalhes da tarefa"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <select id="input-tarefa-categoria">
+                        <option value="Decoração">Decoração</option>
+                        <option value="Cerimonial">Cerimonial</option>
+                        <option value="Fornecedores">Fornecedores</option>
+                        <option value="Documentos">Documentos</option>
+                        <option value="Outros">Outros</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="fecharModal('modal-tarefa')">Cancelar</button>
+                <button class="btn-primary" onclick="salvarTarefa()">Criar Tarefa</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Adicionar Pessoa à Mesa -->
+    <div id="modalNovoConvidadoMesa" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Adicionar Pessoa</h2>
+                <span class="close" onclick="fecharModal('modalNovoConvidadoMesa')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Selecione da Lista de Convidados</label>
+                    <select id="selecionarConvidado" onchange="preencherDadosConvidado()">
+                        <option value="">-- Selecione --</option>
+                    </select>
+                </div>
+                <div class="divider">OU</div>
+                <div class="form-group">
+                    <label>Nome (adicionar manualmente)</label>
+                    <input type="text" id="novoNomeMesa" placeholder="Digite o nome">
+                </div>
+                <div class="form-group">
+                    <label>Tipo</label>
+                    <select id="novoTipoMesa">
+                        <option value="Adulto">Adulto</option>
+                        <option value="Criança">Criança</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="fecharModal('modalNovoConvidadoMesa')">Cancelar</button>
+                <button class="btn-primary" onclick="salvarNovaPessoaMesa()">Adicionar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Importar Arquivo -->
+    <div id="modal-importar" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Importar Convidados</h2>
+                <span class="close" onclick="fecharModal('modal-importar')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Selecione o Arquivo</label>
+                    <input type="file" id="input-arquivo" accept=".csv,.txt,.zip" onchange="processarArquivo()">
+                    <small style="color: #666; margin-top: 8px; display: block;">
+                        Formatos aceitos: CSV, TXT, ZIP<br>
+                        Formato esperado: Responsável,Nome,Tipo,Contato,Data,Idade
+                    </small>
+                </div>
+                <div id="preview-importacao" style="margin-top: 20px; display: none;">
+                    <h4 style="margin-bottom: 10px;">Preview:</h4>
+                    <div id="preview-conteudo" style="max-height: 300px; overflow-y: auto; background: #f8f9fa; padding: 15px; border-radius: 8px;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="fecharModal('modal-importar')">Cancelar</button>
+                <button class="btn-primary" id="btn-confirmar-importacao" onclick="confirmarImportacao()" style="display: none;">
+                    Importar Convidados
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
