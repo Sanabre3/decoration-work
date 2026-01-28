@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Convidados</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+</head>
+
+<body>
+    <!-- Container Principal -->
+    <div class="container">
+        
+        <!-- Cabeçalho com Estatísticas -->
+        <div class="header">
+            <h1>📋 Lista de Convidados</h1>
+            
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-number" id="totalConvidados">0</div>
+                    <div class="stat-label">Total de Convidados</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="totalAdultos">0</div>
+                    <div class="stat-label">Adultos</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="totalCriancas">0</div>
+                    <div class="stat-label">Crianças</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Controles: Botão, Busca e Filtro -->
+        <div class="controls">
+            <button class="btn-download" onclick="window.location.href='dashboard.html'" style="background: linear-gradient(135deg, #667eea, #764ba2); margin-right: 10px;">
+                🎉 Abrir Dashboard
+            </button>
+            <button class="btn-download" onclick="gerarPDF()">
+                📄 Baixar PDF
+            </button>
+            <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="🔍 Buscar por nome ou responsável..."
+                autocomplete="off"
+            >
+            <select id="filterTipo">
+                <option value="todos">Todos</option>
+                <option value="Adulto">Adultos</option>
+                <option value="Criança">Crianças</option>
+            </select>
+        </div>
+        
+        <!-- Tabela de Convidados -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Responsável</th>
+                        <th>Nome</th>
+                        <th>Tipo</th>
+                        <th>Contato</th>
+                        <th>Data Confirmação</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+        
+    </div>
+
+    <!-- Scripts JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

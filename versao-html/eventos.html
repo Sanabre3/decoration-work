@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Eventos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .welcome {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .welcome h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .welcome p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .nome-input {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .nome-input input {
+            padding: 12px 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 8px;
+            font-size: 1em;
+            min-width: 250px;
+        }
+
+        .nome-input input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .nome-input button {
+            padding: 12px 30px;
+            border: none;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nome-input button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-novo-evento {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-novo-evento:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .eventos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .evento-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .evento-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .evento-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .evento-info {
+            color: #666;
+            font-size: 0.9em;
+            margin: 5px 0;
+        }
+
+        .evento-stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.75em;
+            color: #999;
+        }
+
+        .btn-delete {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .evento-card:hover .btn-delete {
+            opacity: 1;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .welcome h2 {
+                font-size: 1.5em;
+            }
+
+            .nome-input {
+                flex-direction: column;
+            }
+
+            .eventos-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎉 Gerenciador de Eventos</h1>
+        </div>
+
+        <div class="welcome" id="welcome-box">
+            <div id="welcome-message">
+                <h2>Olá! 👋</h2>
+                <p>Qual seu nome?</p>
+                <div class="nome-input">
+                    <input type="text" id="input-nome-usuario" placeholder="Digite seu nome..." maxlength="50">
+                    <button onclick="salvarNomeUsuario()">Entrar</button>
+                </div>
+            </div>
+            <div id="user-welcome" style="display: none;">
+                <h2 id="nome-usuario-display"></h2>
+                <p>Bem-vindo(a) de volta! Qual evento quer planejar?</p>
+            </div>
+        </div>
+
+        <button class="btn-novo-evento" onclick="abrirModalNovoEvento()">
+            ➕ Criar Novo Evento
+        </button>
+
+        <div class="section-title">
+            📅 Meus Eventos
+        </div>
+
+        <div id="eventos-container" class="eventos-grid">
+            <div class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <p>Nenhum evento criado ainda.<br>Clique no botão acima para começar!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Novo Evento -->
+    <div id="modal-novo-evento" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Criar Novo Evento</h2>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nome do Evento *</label>
+                    <input type="text" id="input-nome-evento" placeholder="Ex: Casamento João & Maria">
+                </div>
+                <div class="form-group">
+                    <label>Data do Evento *</label>
+                    <input type="date" id="input-data-evento">
+                </div>
+                <div class="form-group">
+                    <label>Local</label>
+                    <input type="text" id="input-local-evento" placeholder="Ex: Salão de Festas">
+                </div>
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea id="input-desc-evento" rows="3" placeholder="Detalhes do evento..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="criarEvento()">Criar Evento</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let nomeUsuario = localStorage.getItem('nomeUsuario') || '';
+        let eventos = JSON.parse(localStorage.getItem('eventos')) || [];
+
+        // Inicialização
+        window.addEventListener('DOMContentLoaded', () => {
+            if (nomeUsuario) {
+                mostrarBoasVindas();
+            }
+            renderEventos();
+        });
+
+        function salvarNomeUsuario() {
+            const nome = document.getElementById('input-nome-usuario').value.trim();
+            if (!nome) {
+                alert('Por favor, digite seu nome');
+                return;
+            }
+            nomeUsuario = nome;
+            localStorage.setItem('nomeUsuario', nome);
+            mostrarBoasVindas();
+        }
+
+        function mostrarBoasVindas() {
+            document.getElementById('welcome-message').style.display = 'none';
+            document.getElementById('user-welcome').style.display = 'block';
+            document.getElementById('nome-usuario-display').textContent = `Olá, ${nomeUsuario}! 👋`;
+        }
+
+        function abrirModalNovoEvento() {
+            if (!nomeUsuario) {
+                alert('Por favor, informe seu nome primeiro');
+                return;
+            }
+            document.getElementById('modal-novo-evento').classList.add('active');
+            // Definir data mínima como hoje
+            document.getElementById('input-data-evento').min = new Date().toISOString().split('T')[0];
+        }
+
+        function fecharModal() {
+            document.getElementById('modal-novo-evento').classList.remove('active');
+            document.getElementById('input-nome-evento').value = '';
+            document.getElementById('input-data-evento').value = '';
+            document.getElementById('input-local-evento').value = '';
+            document.getElementById('input-desc-evento').value = '';
+        }
+
+        function criarEvento() {
+            const nome = document.getElementById('input-nome-evento').value.trim();
+            const data = document.getElementById('input-data-evento').value;
+            const local = document.getElementById('input-local-evento').value.trim();
+            const descricao = document.getElementById('input-desc-evento').value.trim();
+
+            if (!nome || !data) {
+                alert('Preencha o nome e a data do evento');
+                return;
+            }
+
+            const novoEvento = {
+                id: Date.now(),
+                nome,
+                data,
+                local,
+                descricao,
+                criadoEm: new Date().toISOString(),
+                convidados: 0,
+                tarefas: 0,
+                mesas: 0
+            };
+
+            eventos.push(novoEvento);
+            localStorage.setItem('eventos', JSON.stringify(eventos));
+            
+            fecharModal();
+            renderEventos();
+            
+            // Ir para o dashboard do evento
+            setTimeout(() => {
+                abrirEvento(novoEvento.id);
+            }, 300);
+        }
+
+        function renderEventos() {
+            const container = document.getElementById('eventos-container');
+            
+            if (eventos.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <p>Nenhum evento criado ainda.<br>Clique no botão acima para começar!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = eventos.map(e => `
+                <div class="evento-card" onclick="abrirEvento(${e.id})">
+                    <button class="btn-delete" onclick="event.stopPropagation(); deletarEvento(${e.id})">×</button>
+                    <h3>${e.nome}</h3>
+                    <div class="evento-info">📅 ${formatarData(e.data)}</div>
+                    ${e.local ? `<div class="evento-info">📍 ${e.local}</div>` : ''}
+                    <div class="evento-stats">
+                        <div class="stat">
+                            <div class="stat-number">${e.convidados}</div>
+                            <div class="stat-label">Convidados</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">${e.tarefas}</div>
+                            <div class="stat-label">Tarefas</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">${e.mesas}</div>
+                            <div class="stat-label">Mesas</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function formatarData(data) {
+            const [ano, mes, dia] = data.split('-');
+            return `${dia}/${mes}/${ano}`;
+        }
+
+        function abrirEvento(id) {
+            localStorage.setItem('eventoAtual', id);
+            window.location.href = 'dashboard.html';
+        }
+
+        function deletarEvento(id) {
+            if (confirm('Deseja realmente excluir este evento?')) {
+                eventos = eventos.filter(e => e.id !== id);
+                localStorage.setItem('eventos', JSON.stringify(eventos));
+                renderEventos();
+            }
+        }
+
+        // Fechar modal ao clicar fora
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                fecharModal();
+            }
+        });
+
+        // Enter para salvar nome
+        document.getElementById('input-nome-usuario')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                salvarNomeUsuario();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerar PDF do Código Fonte</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        p {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        
+        .info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .info h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .info ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .info li {
+            padding: 8px 0;
+            color: #555;
+        }
+        
+        .info li:before {
+            content: "✓ ";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        
+        .loader {
+            display: none;
+            margin: 20px auto;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loader.active {
+            display: block;
+        }
+        
+        .status {
+            margin-top: 15px;
+            color: #667eea;
+            font-weight: 600;
+            min-height: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">📦</div>
+        <h1>Código Fonte do Projeto</h1>
+        <p>Gere um PDF completo com todo o código fonte do projeto Lista de Convidados, incluindo HTML, CSS e JavaScript.</p>
+        
+        <div class="btn-container">
+            <button onclick="gerarPDFCompleto()">📄 Gerar PDF Completo</button>
+            <button onclick="window.location.href='index.html'" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%)">
+                🏠 Voltar ao Projeto
+            </button>
+        </div>
+        
+        <div class="loader" id="loader"></div>
+        <div class="status" id="status"></div>
+        
+        <div class="info">
+            <h3>📋 O PDF incluirá:</h3>
+            <ul>
+                <li>Código HTML completo (index.html)</li>
+                <li>Código CSS completo (style.css)</li>
+                <li>Código JavaScript completo (script.js)</li>
+                <li>Formatação e destaque de sintaxe</li>
+                <li>Numeração de linhas</li>
+                <li>Índice navegável</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Código fonte dos arquivos
+        const codigoHTML = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Convidados - PDF</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"><\\/script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"><\\/script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Lista de Convidados</h1>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-number" id="totalConvidados">0</div>
+                    <div class="stat-label">Total de Convidados</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="totalAdultos">0</div>
+                    <div class="stat-label">Adultos</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="totalCriancas">0</div>
+                    <div class="stat-label">Crianças</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn-download" onclick="gerarPDF()">📄 Baixar PDF</button>
+            <input type="text" id="searchInput" placeholder="🔍 Buscar por nome ou responsável...">
+            <select id="filterTipo">
+                <option value="todos">Todos</option>
+                <option value="Adulto">Adultos</option>
+                <option value="Criança">Crianças</option>
+            </select>
+        </div>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Responsável</th>
+                        <th>Nome</th>
+                        <th>Tipo</th>
+                        <th>Contato</th>
+                        <th>Data Confirmação</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="script.js"><\\/script>
+</body>
+</html>`;
+
+        async function gerarPDFCompleto() {
+            const loader = document.getElementById('loader');
+            const status = document.getElementById('status');
+            
+            loader.classList.add('active');
+            status.textContent = 'Carregando código fonte...';
+            
+            try {
+                // Buscar os arquivos
+                const [cssResponse, jsResponse] = await Promise.all([
+                    fetch('style.css'),
+                    fetch('script.js')
+                ]);
+                
+                const codigoCSS = await cssResponse.text();
+                const codigoJS = await jsResponse.text();
+                
+                status.textContent = 'Gerando PDF...';
+                
+                setTimeout(() => {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF('p', 'mm', 'a4');
+                    
+                    const corPrimaria = [102, 126, 234];
+                    const margemEsq = 15;
+                    const margemDir = 195;
+                    const larguraUtil = margemDir - margemEsq;
+                    let yPos = 20;
+                    
+                    // Função para adicionar cabeçalho
+                    function adicionarCabecalho(titulo) {
+                        doc.setFillColor(102, 126, 234);
+                        doc.rect(0, 0, 210, 35, 'F');
+                        doc.setFontSize(24);
+                        doc.setTextColor(255, 255, 255);
+                        doc.setFont(undefined, 'bold');
+                        doc.text(titulo, 105, 20, { align: 'center' });
+                        doc.setFontSize(10);
+                        doc.setFont(undefined, 'normal');
+                        const dataAtual = new Date().toLocaleDateString('pt-BR');
+                        doc.text(\`Gerado em: \${dataAtual}\`, 105, 28, { align: 'center' });
+                        return 45;
+                    }
+                    
+                    // Função para adicionar rodapé
+                    function adicionarRodape(numeroPagina) {
+                        doc.setFontSize(8);
+                        doc.setTextColor(150);
+                        doc.text(
+                            \`Página \${numeroPagina}\`,
+                            105,
+                            doc.internal.pageSize.height - 10,
+                            { align: 'center' }
+                        );
+                    }
+                    
+                    // Função para adicionar código com quebra de linha
+                    function adicionarCodigo(codigo, arquivo) {
+                        doc.addPage();
+                        let pagina = doc.internal.getNumberOfPages();
+                        
+                        // Cabeçalho da seção
+                        doc.setFillColor(248, 249, 250);
+                        doc.rect(0, 0, 210, 25, 'F');
+                        doc.setFontSize(16);
+                        doc.setTextColor(102, 126, 234);
+                        doc.setFont(undefined, 'bold');
+                        doc.text(arquivo, margemEsq, 15);
+                        
+                        yPos = 35;
+                        
+                        const linhas = codigo.split('\\n');
+                        doc.setFontSize(8);
+                        doc.setFont('courier', 'normal');
+                        
+                        linhas.forEach((linha, index) => {
+                            if (yPos > 270) {
+                                adicionarRodape(pagina);
+                                doc.addPage();
+                                pagina++;
+                                yPos = 20;
+                            }
+                            
+                            // Número da linha
+                            doc.setTextColor(150);
+                            doc.text(\`\${(index + 1).toString().padStart(4, ' ')}\`, margemEsq, yPos);
+                            
+                            // Código
+                            doc.setTextColor(50);
+                            const textoLinha = linha.substring(0, 90); // Limitar caracteres
+                            doc.text(textoLinha, margemEsq + 12, yPos);
+                            
+                            yPos += 4.5;
+                        });
+                        
+                        adicionarRodape(pagina);
+                    }
+                    
+                    // Página de capa
+                    yPos = adicionarCabecalho('📦 Código Fonte do Projeto');
+                    
+                    doc.setFontSize(18);
+                    doc.setTextColor(102, 126, 234);
+                    doc.setFont(undefined, 'bold');
+                    doc.text('Lista de Convidados', 105, yPos + 20, { align: 'center' });
+                    
+                    doc.setFontSize(12);
+                    doc.setTextColor(100);
+                    doc.setFont(undefined, 'normal');
+                    doc.text('Documentação Completa do Código Fonte', 105, yPos + 30, { align: 'center' });
+                    
+                    // Índice
+                    yPos = yPos + 50;
+                    doc.setFontSize(14);
+                    doc.setTextColor(102, 126, 234);
+                    doc.setFont(undefined, 'bold');
+                    doc.text('📑 Índice', margemEsq, yPos);
+                    
+                    yPos += 10;
+                    doc.setFontSize(11);
+                    doc.setTextColor(80);
+                    doc.setFont(undefined, 'normal');
+                    
+                    const indice = [
+                        '1. index.html - Estrutura HTML do projeto',
+                        '2. style.css - Estilos e responsividade',
+                        '3. script.js - Lógica e funcionalidades'
+                    ];
+                    
+                    indice.forEach(item => {
+                        doc.text(item, margemEsq + 5, yPos);
+                        yPos += 8;
+                    });
+                    
+                    // Descrição do projeto
+                    yPos += 10;
+                    doc.setFontSize(14);
+                    doc.setTextColor(102, 126, 234);
+                    doc.setFont(undefined, 'bold');
+                    doc.text('📝 Sobre o Projeto', margemEsq, yPos);
+                    
+                    yPos += 10;
+                    doc.setFontSize(10);
+                    doc.setTextColor(80);
+                    doc.setFont(undefined, 'normal');
+                    
+                    const descricao = [
+                        'Sistema de gerenciamento de lista de convidados com funcionalidades:',
+                        '',
+                        '• Visualização organizada de convidados',
+                        '• Filtros por tipo (Adulto/Criança)',
+                        '• Busca por nome ou responsável',
+                        '• Geração de PDF profissional',
+                        '• Design responsivo para mobile',
+                        '• Interface moderna e intuitiva'
+                    ];
+                    
+                    descricao.forEach(linha => {
+                        doc.text(linha, margemEsq + 5, yPos);
+                        yPos += 6;
+                    });
+                    
+                    adicionarRodape(1);
+                    
+                    // Adicionar códigos
+                    status.textContent = 'Adicionando HTML...';
+                    adicionarCodigo(codigoHTML, '📄 index.html');
+                    
+                    status.textContent = 'Adicionando CSS...';
+                    adicionarCodigo(codigoCSS, '🎨 style.css');
+                    
+                    status.textContent = 'Adicionando JavaScript...';
+                    adicionarCodigo(codigoJS, '⚡ script.js');
+                    
+                    // Salvar
+                    status.textContent = 'Finalizando...';
+                    const nomeArquivo = \`codigo-fonte-projeto-\${new Date().toLocaleDateString('pt-BR').replace(/\\//g, '-')}.pdf\`;
+                    doc.save(nomeArquivo);
+                    
+                    loader.classList.remove('active');
+                    status.textContent = '✅ PDF gerado com sucesso!';
+                    status.style.color = '#28a745';
+                    
+                    setTimeout(() => {
+                        status.textContent = '';
+                        status.style.color = '#667eea';
+                    }, 3000);
+                    
+                }, 500);
+                
+            } catch (error) {
+                loader.classList.remove('active');
+                status.textContent = '❌ Erro ao gerar PDF: ' + error.message;
+                status.style.color = '#dc3545';
+                console.error('Erro:', error);
+            }
+        }
+    </script>
+</body>
+</html>

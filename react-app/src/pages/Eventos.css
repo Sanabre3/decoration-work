@@ -1,0 +1,148 @@
+.eventos-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.eventos-header {
+  text-align: center;
+  color: white;
+  margin-bottom: 40px;
+}
+
+.eventos-header h1 {
+  font-size: 3em;
+  margin-bottom: 10px;
+}
+
+.eventos-header p {
+  font-size: 1.2em;
+  opacity: 0.9;
+}
+
+.eventos-container > .btn-primary {
+  margin-bottom: 30px;
+  padding: 15px 40px;
+  font-size: 1.1em;
+}
+
+.eventos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.evento-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.evento-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+}
+
+.evento-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.evento-header h3 {
+  font-size: 1.5em;
+  color: #333;
+  flex: 1;
+}
+
+.btn-excluir {
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+  padding: 5px;
+  transition: transform 0.3s;
+}
+
+.btn-excluir:hover {
+  transform: scale(1.2);
+}
+
+.evento-stats {
+  display: flex;
+  gap: 20px;
+  margin: 20px 0;
+  padding: 15px 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+.evento-stats .stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.evento-stats .stat span:first-child {
+  font-size: 1.8em;
+}
+
+.evento-stats .stat strong {
+  font-size: 1.4em;
+  color: #667eea;
+  display: block;
+}
+
+.evento-stats .stat small {
+  color: #999;
+  font-size: 0.85em;
+}
+
+.evento-data {
+  color: #999;
+  font-size: 0.9em;
+  margin-top: 10px;
+}
+
+/* Modal específico para eventos */
+.eventos-container .modal-content {
+  text-align: center;
+}
+
+.eventos-container .modal-content p {
+  margin-bottom: 20px;
+  color: #666;
+}
+
+.eventos-container .modal-content input {
+  width: 100%;
+  padding: 15px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  font-size: 1em;
+  margin-bottom: 20px;
+}
+
+.eventos-container .modal-content input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+@media (max-width: 768px) {
+  .eventos-header h1 {
+    font-size: 2em;
+  }
+
+  .eventos-grid {
+    grid-template-columns: 1fr;
+  }
+}
